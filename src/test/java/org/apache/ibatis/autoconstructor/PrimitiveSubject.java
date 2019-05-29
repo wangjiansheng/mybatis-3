@@ -17,6 +17,9 @@ package org.apache.ibatis.autoconstructor;
 
 import java.util.Date;
 
+/**
+ * 原始构造器
+ */
 public class PrimitiveSubject {
   private final int id;
   private final String name;

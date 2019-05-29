@@ -46,32 +46,39 @@ class AutoConstructorTest {
         "org/apache/ibatis/autoconstructor/CreateDB.sql");
   }
 
-  @Test
+  @Test//查询数据
   void fullyPopulatedSubject() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      //mapper 为代理类  MapperProxyFactory类中由jdk动态代理生成
       final AutoConstructorMapper mapper = sqlSession.getMapper(AutoConstructorMapper.class);
       final Object subject = mapper.getSubject(1);
       assertNotNull(subject);
     }
   }
 
-  @Test
+  @Test  //测试报异常   原始构造器
   void primitiveSubjects() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       final AutoConstructorMapper mapper = sqlSession.getMapper(AutoConstructorMapper.class);
+//      (1, 'a', 10, 100, 45, 1, CURRENT_TIMESTAMP),
+//      (2, 'b', 10, NULL, 45, 1, CURRENT_TIMESTAMP),
+//      (2, 'c', 10, NULL, NULL, 0, CURRENT_TIMESTAMP);
+
+      //报异常原因是因为 int字段映射了null
       assertThrows(PersistenceException.class, mapper::getSubjects);
     }
   }
 
-  @Test
+  @Test  //测试注解了的构造器
   void annotatedSubject() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       final AutoConstructorMapper mapper = sqlSession.getMapper(AutoConstructorMapper.class);
+      //判断是否为空和长度是否和查出来的数据量一样
       verifySubjects(mapper.getAnnotatedSubjects());
     }
   }
 
-  @Test
+  @Test //Height 属性错误
   void badSubject() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       final AutoConstructorMapper mapper = sqlSession.getMapper(AutoConstructorMapper.class);
@@ -79,7 +86,7 @@ class AutoConstructorTest {
     }
   }
 
-  @Test
+  @Test// 枚举对映射  TestEnum
   void extensiveSubject() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       final AutoConstructorMapper mapper = sqlSession.getMapper(AutoConstructorMapper.class);

@@ -19,7 +19,7 @@ public class BadSubject {
   private final int id;
   private final String name;
   private final int age;
-  private final Height height;
+  private final Height height;//错误的映射字段
   private final Double weight;
 
   public BadSubject(final int id, final String name, final int age, final Height height, final Double weight) {
@@ -31,6 +31,5 @@ public class BadSubject {
   }
 
   private class Height {
-
   }
 }

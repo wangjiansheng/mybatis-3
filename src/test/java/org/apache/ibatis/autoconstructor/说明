@@ -1,0 +1,13 @@
+测试 注解构造器
+
+@AutomapConstructor
+  public AnnotatedSubject(final int id, final String name, final int age, final Integer height, final Integer weight) {
+    this.id = id;
+    this.name = name;
+    this.age = age;
+    this.height = height == null ? 0 : height;
+    this.weight = weight == null ? 0 : weight;
+  }
+
+
+ AutomapConstructor可以替换原有的构造器，映射时候选择这个构造器
