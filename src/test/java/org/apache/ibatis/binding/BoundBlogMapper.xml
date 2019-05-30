@@ -52,6 +52,7 @@
         <constructor>
             <idArg column="id" javaType="_int"/>
             <arg column="title" javaType="java.lang.String"/>
+            <!-- authorResultMap 在author.xml文件中 -->
             <arg javaType="org.apache.ibatis.domain.blog.Author" resultMap="org.apache.ibatis.binding.BoundAuthorMapper.authorResultMap"/>
             <arg column="id" javaType="java.util.List" select="selectPostsForBlog"/>
         </constructor>

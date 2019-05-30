@@ -15,12 +15,12 @@
  */
 package org.apache.ibatis.cache;
 
+import org.apache.ibatis.reflection.ArrayUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-
-import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
  * @author Clinton Begin
@@ -117,6 +117,10 @@ public class CacheKey implements Cloneable, Serializable {
     returnValue.add(String.valueOf(hashcode));
     returnValue.add(String.valueOf(checksum));
     updateList.stream().map(ArrayUtil::toString).forEach(returnValue::add);
+    //1308394878:-145713707
+    // :org.apache.ibatis.binding.BoundBlogMapper.selectBlogsAsMapById
+    // :0:2147483647
+    // :SELECT * FROM blog:Production
     return returnValue.toString();
   }
 

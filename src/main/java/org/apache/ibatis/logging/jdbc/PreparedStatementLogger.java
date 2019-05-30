@@ -15,15 +15,15 @@
  */
 package org.apache.ibatis.logging.jdbc;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.reflection.ExceptionUtil;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * PreparedStatement proxy to add logging.
@@ -49,13 +49,14 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
       }
       if (EXECUTE_METHODS.contains(method.getName())) {
         if (isDebugEnabled()) {
-          debug("Parameters: " + getParameterValueString(), true);
+          debug("PreparedStatementLogger.java invoke() Parameters: " + getParameterValueString(), true);
         }
         clearColumnInfo();
         if ("executeQuery".equals(method.getName())) {
           ResultSet rs = (ResultSet) method.invoke(statement, params);
           return rs == null ? null : ResultSetLogger.newInstance(rs, statementLog, queryStack);
         } else {
+          debug("PreparedStatementLogger.java sql 正试执行",true);
           return method.invoke(statement, params);
         }
       } else if (SET_METHODS.contains(method.getName())) {
