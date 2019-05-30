@@ -1,0 +1,8 @@
+@parma
+
+
+@flush
+
+<mapper namespace="wrong.namespace">
+
+返回参数绑定
