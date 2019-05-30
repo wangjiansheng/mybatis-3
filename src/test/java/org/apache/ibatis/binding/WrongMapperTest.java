@@ -21,9 +21,12 @@ import org.junit.jupiter.api.Test;
 
 class WrongMapperTest {
 
-  @Test
+  //  Cannot use both @One and @Many annotations in the same @Result
+  @Test//不能在同一个@Result中同时使用@One和@Many注释
   void shouldFailForBothOneAndMany() {
+
     Configuration configuration = new Configuration();
+    configuration.addMapper(MapperWithOneAndMany.class);
     Assertions.assertThrows(RuntimeException.class, () -> {
       configuration.addMapper(MapperWithOneAndMany.class);
     });

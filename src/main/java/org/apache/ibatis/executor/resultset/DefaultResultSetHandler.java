@@ -336,7 +336,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     skipRows(resultSet, rowBounds);
     //shouldProcessMoreRows  limit 获取数据设置
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
-      System.out.println(" rowBounds limit 循环次数");
+      System.out.println(" rowBounds limit 循环次数 默认：MAX_VALUE");
       ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
       Object rowValue = getRowValue(rsw, discriminatedResultMap, null);
       storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);

@@ -50,7 +50,7 @@ public class FlushTest {
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 
-    @Test
+    @Test//mapper    @Flush  测试
     public void invokeFlushStatementsViaMapper() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
 

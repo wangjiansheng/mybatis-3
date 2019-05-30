@@ -21,15 +21,17 @@ import org.junit.jupiter.api.Test;
 
 class WrongNamespacesTest {
 
-  @Test
+  @Test//测试xml中namespace 错误 <mapper namespace="wrong.namespace">
   void shouldFailForWrongNamespace() {
     Configuration configuration = new Configuration();
+   //Expected 'org.apache.ibatis.binding.WrongNamespaceMapper' but found 'wrong.namespace'.
     Assertions.assertThrows(RuntimeException.class, () -> configuration.addMapper(WrongNamespaceMapper.class));
   }
 
-  @Test
+  @Test//测试xml中没有设置 namespace
   void shouldFailForMissingNamespace() {
     Configuration configuration = new Configuration();
+   // namespace cannot be empty
     Assertions.assertThrows(RuntimeException.class, () -> configuration.addMapper(MissingNamespaceMapper.class));
   }
 
