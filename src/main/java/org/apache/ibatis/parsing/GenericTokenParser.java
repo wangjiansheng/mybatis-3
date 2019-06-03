@@ -19,7 +19,12 @@ package org.apache.ibatis.parsing;
  * @author Clinton Begin
  */
 public class GenericTokenParser {
+  //TextSqlNode中代码如下：
+//  private GenericTokenParser createParser(TokenHandler handler) {
+//    return new GenericTokenParser("${", "}", handler);
+//  }
 
+    //创建GenericTokenParser时 设置 openToken、closeToken
   private final String openToken;
   private final String closeToken;
   private final TokenHandler handler;
@@ -46,10 +51,12 @@ public class GenericTokenParser {
     while (start > -1) {
       if (start > 0 && src[start - 1] == '\\') {
         // this open token is escaped. remove the backslash and continue.
+        //此打开令牌已转义。删除反斜杠并继续。
         builder.append(src, offset, start - offset - 1).append(openToken);
         offset = start + openToken.length();
       } else {
         // found open token. let's search close token.
+        //发现开放的令牌。让我们搜索close令牌。
         if (expression == null) {
           expression = new StringBuilder();
         } else {
@@ -61,6 +68,7 @@ public class GenericTokenParser {
         while (end > -1) {
           if (end > offset && src[end - 1] == '\\') {
             // this close token is escaped. remove the backslash and continue.
+            //此关闭令牌已转义。删除反斜杠并继续
             expression.append(src, offset, end - offset - 1).append(closeToken);
             offset = end + closeToken.length();
             end = text.indexOf(closeToken, offset);
@@ -72,9 +80,12 @@ public class GenericTokenParser {
         }
         if (end == -1) {
           // close token was not found.
+          //未找到关闭令牌。
           builder.append(src, start, src.length - start);
           offset = src.length;
         } else {
+          //ognl表达式处理
+          //handler  为空sqlnode内部类
           builder.append(handler.handleToken(expression.toString()));
           offset = end + closeToken.length();
         }

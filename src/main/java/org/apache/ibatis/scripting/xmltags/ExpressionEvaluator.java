@@ -15,16 +15,17 @@
  */
 package org.apache.ibatis.scripting.xmltags;
 
+import org.apache.ibatis.builder.BuilderException;
+
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.builder.BuilderException;
-
 /**
  * @author Clinton Begin
+ * 表达式解析类
  */
 public class ExpressionEvaluator {
 

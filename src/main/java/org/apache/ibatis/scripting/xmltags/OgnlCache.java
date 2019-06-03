@@ -15,17 +15,16 @@
  */
 package org.apache.ibatis.scripting.xmltags;
 
+import ognl.Ognl;
+import ognl.OgnlException;
+import org.apache.ibatis.builder.BuilderException;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ognl.Ognl;
-import ognl.OgnlException;
-
-import org.apache.ibatis.builder.BuilderException;
-
 /**
  * Caches OGNL parsed expressions.
- *
+ *缓存OGNL解析表达式。
  * @author Eduardo Macarron
  *
  * @see <a href='http://code.google.com/p/mybatis/issues/detail?id=342'>Issue 342</a>
@@ -43,12 +42,20 @@ public final class OgnlCache {
   public static Object getValue(String expression, Object root) {
     try {
       Map context = Ognl.createDefaultContext(root, MEMBER_ACCESS, CLASS_RESOLVER, null);
+      //跳转到Ognl.jar  由SimpleNode.java  处理  ，
+      //OgnlOps.equal(v1, v2)  ASTEq.java
       return Ognl.getValue(parseExpression(expression), context, root);
     } catch (OgnlException e) {
       throw new BuilderException("Error evaluating expression '" + expression + "'. Cause: " + e, e);
     }
   }
 
+  /**
+   * 解析表达式，并且缓存表达式
+   * @param expression
+   * @return
+   * @throws OgnlException
+   */
   private static Object parseExpression(String expression) throws OgnlException {
     Object node = expressionCache.get(expression);
     if (node == null) {

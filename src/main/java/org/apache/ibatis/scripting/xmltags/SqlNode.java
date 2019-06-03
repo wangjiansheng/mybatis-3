@@ -17,7 +17,12 @@ package org.apache.ibatis.scripting.xmltags;
 
 /**
  * @author Clinton Begin
+ * 解析xml  标签类的接口
  */
 public interface SqlNode {
+  /**
+   * 多个sql 在SqlNode.apply中 循环 append
+   * sql 组装
+   */
   boolean apply(DynamicContext context);
 }

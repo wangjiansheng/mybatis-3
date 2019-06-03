@@ -15,20 +15,21 @@
  */
 package org.apache.ibatis.builder.xml.dynamic;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.HashMap;
-
 import org.apache.ibatis.domain.blog.Author;
 import org.apache.ibatis.domain.blog.Section;
 import org.apache.ibatis.scripting.xmltags.ExpressionEvaluator;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+//表达式解析类
 class ExpressionEvaluatorTest {
 
   private ExpressionEvaluator evaluator = new ExpressionEvaluator();
 
-  @Test
+  @Test//解析username == 'cbegin'是否等于这个值
   void shouldCompareStringsReturnTrue() {
     boolean value = evaluator.evaluateBoolean("username == 'cbegin'", new Author(1, "cbegin", "******", "cbegin@apache.org", "N/A", Section.NEWS));
     assertTrue(value);
@@ -40,7 +41,7 @@ class ExpressionEvaluatorTest {
     assertFalse(value);
   }
 
-  @Test
+  @Test // 判断username  不为null;
   void shouldReturnTrueIfNotNull() {
     boolean value = evaluator.evaluateBoolean("username", new Author(1, "cbegin", "******", "cbegin@apache.org", "N/A", Section.NEWS));
     assertTrue(value);
@@ -52,7 +53,7 @@ class ExpressionEvaluatorTest {
     assertFalse(value);
   }
 
-  @Test
+  @Test  //id  不为0  ，数值类型判断
   void shouldReturnTrueIfNotZero() {
     boolean value = evaluator.evaluateBoolean("id", new Author(1, "cbegin", null, "cbegin@apache.org", "N/A", Section.NEWS));
     assertTrue(value);
@@ -81,6 +82,7 @@ class ExpressionEvaluatorTest {
     final Iterable<?> iterable = evaluator.evaluateIterable("array", parameterObject);
     int i = 0;
     for (Object o : iterable) {
+      System.out.println(o);
       assertEquals(String.valueOf(++i), o);
     }
   }

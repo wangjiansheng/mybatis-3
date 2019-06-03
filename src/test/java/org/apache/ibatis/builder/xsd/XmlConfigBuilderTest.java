@@ -61,10 +61,15 @@ class XmlConfigBuilderTest {
       XMLConfigBuilder builder = new XMLConfigBuilder(inputStream);
       Configuration config = builder.parse();
       assertNotNull(config);
+      // 自动映射 默认值     将只自动映射结果，而不定义内部的嵌套结果映射。
       assertEquals(AutoMappingBehavior.PARTIAL, config.getAutoMappingBehavior());
+      //映射不知道到的列
       assertEquals(AutoMappingUnknownColumnBehavior.NONE, config.getAutoMappingUnknownColumnBehavior());
+      // 默认 ture  缓存
       assertTrue(config.isCacheEnabled());
+      // 动态代理
       assertTrue(config.getProxyFactory() instanceof JavassistProxyFactory);
+      //懒加载
       assertFalse(config.isLazyLoadingEnabled());
       assertFalse(config.isAggressiveLazyLoading());
       assertTrue(config.isMultipleResultSetsEnabled());
@@ -94,8 +99,12 @@ class XmlConfigBuilderTest {
     // System.setProperty(XPathParser.KEY_USE_XSD, "true");
     String resource = "org/apache/ibatis/builder/xsd/CustomizedSettingsMapperConfig.xml";
     try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
-      XMLConfigBuilder builder = new XMLConfigBuilder(inputStream);
-      Configuration config = builder.parse();
+
+      // XMLConfigBuilder builder = new XMLConfigBuilder(inputStream);
+      //Configuration config = builder.parse();
+
+      SqlSessionFactory  defaultSqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+      Configuration config =  defaultSqlSessionFactory.getConfiguration();
 
       assertEquals(AutoMappingBehavior.NONE, config.getAutoMappingBehavior());
       assertEquals(AutoMappingUnknownColumnBehavior.WARNING, config.getAutoMappingUnknownColumnBehavior());

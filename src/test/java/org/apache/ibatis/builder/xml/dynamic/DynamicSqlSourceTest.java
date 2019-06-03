@@ -15,47 +15,40 @@
  */
 package org.apache.ibatis.builder.xml.dynamic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.BaseDataTest;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.scripting.xmltags.ChooseSqlNode;
-import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
-import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
-import org.apache.ibatis.scripting.xmltags.IfSqlNode;
-import org.apache.ibatis.scripting.xmltags.MixedSqlNode;
-import org.apache.ibatis.scripting.xmltags.SetSqlNode;
-import org.apache.ibatis.scripting.xmltags.SqlNode;
-import org.apache.ibatis.scripting.xmltags.TextSqlNode;
-import org.apache.ibatis.scripting.xmltags.WhereSqlNode;
+import org.apache.ibatis.scripting.xmltags.*;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+//动态sql测试
 class DynamicSqlSourceTest extends BaseDataTest {
 
-  @Test
+  @Test  //1个SqlNode不带参数
   void shouldDemonstrateSimpleExpectedTextWithNoLoopsOrConditionals() throws Exception {
     final String expected = "SELECT * FROM BLOG";
+    //创建sqlnode
     final MixedSqlNode sqlNode = mixedContents(new TextSqlNode(expected));
+    //MixedSqlNode
+    //将sqlnode set进 DynamicSqlSource
     DynamicSqlSource source = createDynamicSqlSource(sqlNode);
+    //获取boundSql
     BoundSql boundSql = source.getBoundSql(null);
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//多个SqlNode
   void shouldDemonstrateMultipartExpectedTextWithNoLoopsOrConditionals() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -65,7 +58,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test  //IfSqlNode test=true 测试
   void shouldConditionallyIncludeWhere() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -76,7 +69,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test  //IfSqlNode test=false 测试
   void shouldConditionallyExcludeWhere() throws Exception {
     final String expected = "SELECT * FROM BLOG";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -87,7 +80,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//ChooseSqlNode 测试  IfSqlNode不通过使用默认的
   void shouldConditionallyDefault() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE CATEGORY = 'DEFAULT'";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -102,7 +95,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test////ChooseSqlNode 测试
   void shouldConditionallyChooseFirst() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE CATEGORY = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -125,14 +118,14 @@ class DynamicSqlSourceTest extends BaseDataTest {
         new ChooseSqlNode(new ArrayList<SqlNode>() {{
           add(new IfSqlNode(mixedContents(new TextSqlNode("WHERE CATEGORY = ?")), "false"
           ));
-          add(new IfSqlNode(mixedContents(new TextSqlNode("WHERE CATEGORY = 'NONE'")), "true"
+          add(new IfSqlNode(mixedContents(new TextSqlNode("WHERE CATEGORY = 'NONE'  ")), "true"
           ));
         }}, mixedContents(new TextSqlNode("WHERE CATEGORY = 'DEFAULT'"))));
     BoundSql boundSql = source.getBoundSql(null);
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test// WhereSqlNode  自动添加where   而且去掉多余的and
   void shouldTrimWHEREInsteadOfANDForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE  ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -147,7 +140,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test// WhereSqlNode  自动添加where   而且去掉多余的 and 和保留 LF 换行
   void shouldTrimWHEREANDWithLFForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \n ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -160,7 +153,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//WhereSqlNode  自动添加where   而且去掉多余的 and 和保留 CRLF 回车换行
   void shouldTrimWHEREANDWithCRLFForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \r\n ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -173,7 +166,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//tob
   void shouldTrimWHEREANDWithTABForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \t ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -186,7 +179,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test // or
   void shouldTrimWHEREORWithLFForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \n ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -199,7 +192,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test //or
   void shouldTrimWHEREORWithCRLFForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \r\n ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -212,7 +205,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//or
   void shouldTrimWHEREORWithTABForFirstCondition() throws Exception {
     final String expected = "SELECT * FROM BLOG WHERE \t ID = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -270,7 +263,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//SetSqlNode
   void shouldTrimSETInsteadOfCOMMAForBothConditions() throws Exception {
     final String expected = "UPDATE BLOG SET ID = ?,  NAME = ?";
     DynamicSqlSource source = createDynamicSqlSource(
@@ -312,7 +305,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//ForEach Item In Collection
   void shouldIterateOnceForEachItemInCollection() throws Exception {
     final HashMap<String, String[]> parameterObject = new HashMap<String, String[]>() {{
       put("array", new String[]{"one", "two", "three"});
@@ -329,19 +322,22 @@ class DynamicSqlSourceTest extends BaseDataTest {
     assertEquals("__frch_item_2", boundSql.getParameterMappings().get(2).getProperty());
   }
 
-  @Test
+  @Test//Ognl 表达式
   void shouldHandleOgnlExpression() throws Exception {
+    // ForEach 集合参数
     final HashMap<String, String> parameterObject = new HashMap<String, String>() {{
       put("name", "Steve");
     }};
     final String expected = "Expression test: 3 / yes.";
     DynamicSqlSource source = createDynamicSqlSource(new TextSqlNode("Expression test: ${name.indexOf('v')} / ${name in {'Bob', 'Steve'\\} ? 'yes' : 'no'}."));
+    // 设置ForEach 集合参数
     BoundSql boundSql = source.getBoundSql(parameterObject);
     assertEquals(expected, boundSql.getSql());
   }
 
-  @Test
+  @Test//ForEach   Collection Is Empty
   void shouldSkipForEachWhenCollectionIsEmpty() throws Exception {
+    // ForEach 集合参数
     final HashMap<String, Integer[]> parameterObject = new HashMap<String, Integer[]>() {{
         put("array", new Integer[] {});
     }};
@@ -349,6 +345,7 @@ class DynamicSqlSourceTest extends BaseDataTest {
     DynamicSqlSource source = createDynamicSqlSource(new TextSqlNode("SELECT * FROM BLOG"),
         new ForEachSqlNode(new Configuration(), mixedContents(
             new TextSqlNode("#{item}")), "array", null, "item", "WHERE id in (", ")", ","));
+    // 设置ForEach 集合参数
     BoundSql boundSql = source.getBoundSql(parameterObject);
     assertEquals(expected, boundSql.getSql());
     assertEquals(0, boundSql.getParameterMappings().size());
@@ -366,9 +363,15 @@ class DynamicSqlSourceTest extends BaseDataTest {
     DynamicSqlSource source = createDynamicSqlSource(
         new TextSqlNode("INSERT INTO BLOG (ID, NAME, NOTE, COMMENT) VALUES"),
         new ForEachSqlNode(new Configuration(),mixedContents(
-            new TextSqlNode("#{uuu.u}, #{u.id}, #{ u,typeHandler=org.apache.ibatis.type.StringTypeHandler},"
-                + " #{u:VARCHAR,typeHandler=org.apache.ibatis.type.StringTypeHandler}")), "uuuu", "uu", "u", "(", ")", ","));
+            new TextSqlNode("#{uuu.u}, #{u.id}," +
+              //list 的位置 即  list_0
+              " #{ u,typeHandler=org.apache.ibatis.type.StringTypeHandler},"
+              //list 的位置 即  list_0
+                + " #{u:VARCHAR,typeHandler=org.apache.ibatis.type.StringTypeHandler}")),
+          "uuuu", "uu", "u", "(", ")", ","));
     BoundSql boundSql = source.getBoundSql(param);
+    System.out.println(boundSql.getSql());
+    System.out.println(boundSql.getParameterMappings());
     assertEquals(4, boundSql.getParameterMappings().size());
     assertEquals("uuu.u", boundSql.getParameterMappings().get(0).getProperty());
     assertEquals("__frch_u_0.id", boundSql.getParameterMappings().get(1).getProperty());
@@ -390,12 +393,13 @@ class DynamicSqlSourceTest extends BaseDataTest {
     return new MixedSqlNode(Arrays.asList(contents));
   }
 
-  @Test
+  @Test  //参数为null
   void shouldMapNullStringsToEmptyStrings() {
     final String expected = "id=${id}";
     final MixedSqlNode sqlNode = mixedContents(new TextSqlNode(expected));
     final DynamicSqlSource source = new DynamicSqlSource(new Configuration(), sqlNode);
     String sql = source.getBoundSql(new Bean(null)).getSql();
+    System.out.println(sql);
     Assertions.assertEquals("id=", sql);
   }
 

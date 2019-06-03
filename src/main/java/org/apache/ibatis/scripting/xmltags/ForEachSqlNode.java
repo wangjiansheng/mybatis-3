@@ -15,10 +15,10 @@
  */
 package org.apache.ibatis.scripting.xmltags;
 
-import java.util.Map;
-
 import org.apache.ibatis.parsing.GenericTokenParser;
 import org.apache.ibatis.session.Configuration;
+
+import java.util.Map;
 
 /**
  * @author Clinton Begin
@@ -148,7 +148,7 @@ public class ForEachSqlNode implements SqlNode {
       return delegate.getSql();
     }
 
-    @Override
+    @Override//content  是 TokenHandler的继承类，用Lamaba表达式
     public void appendSql(String sql) {
       GenericTokenParser parser = new GenericTokenParser("#{", "}", content -> {
         String newContent = content.replaceFirst("^\\s*" + item + "(?![^.,:\\s])", itemizeItem(item, index));
@@ -157,6 +157,17 @@ public class ForEachSqlNode implements SqlNode {
         }
         return "#{" + newContent + "}";
       });
+     /* content实际上是内部Lamaba表达式
+     new TokenHandler() {
+        @Override
+        public String handleToken(String content) {
+          String newContent = content.replaceFirst("^\\s*" + item + "(?![^.,:\\s])", itemizeItem(item, index));
+          if (itemIndex != null && newContent.equals(content)) {
+            newContent = content.replaceFirst("^\\s*" + itemIndex + "(?![^.,:\\s])", itemizeItem(itemIndex, index));
+          }
+          return "#{" + newContent + "}";
+        }
+      });*/
 
       delegate.appendSql(parser.parse(sql));
     }

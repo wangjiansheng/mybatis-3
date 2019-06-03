@@ -15,16 +15,15 @@
  */
 package org.apache.ibatis.scripting.xmltags;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
-
 import ognl.OgnlContext;
 import ognl.OgnlRuntime;
 import ognl.PropertyAccessor;
-
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author Clinton Begin
@@ -61,6 +60,10 @@ public class DynamicContext {
     bindings.put(name, value);
   }
 
+  /**
+   * 多个sql 在SqlNode.apply中 循环 append
+   * @param sql
+   */
   public void appendSql(String sql) {
     sqlBuilder.add(sql);
   }

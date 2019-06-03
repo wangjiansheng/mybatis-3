@@ -41,6 +41,7 @@ public class ParameterExpression extends HashMap<String, String> {
 
   private void parse(String expression) {
     int p = skipWS(expression, 0);
+    // 有括号“(”  map 的key就是 expression，否则就是：property
     if (expression.charAt(p) == '(') {
       expression(expression, p + 1);
     } else {
@@ -73,6 +74,7 @@ public class ParameterExpression extends HashMap<String, String> {
 
   private int skipWS(String expression, int p) {
     for (int i = p; i < expression.length(); i++) {
+      //0x20 即字符空格
       if (expression.charAt(i) > 0x20) {
         return i;
       }

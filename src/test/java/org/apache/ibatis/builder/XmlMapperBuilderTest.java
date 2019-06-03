@@ -15,9 +15,6 @@
  */
 package org.apache.ibatis.builder;
 
-import java.io.InputStream;
-import java.util.regex.Pattern;
-
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -28,10 +25,13 @@ import org.apache.ibatis.type.TypeHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.googlecode.catchexception.apis.BDDCatchException.*;
-import static org.assertj.core.api.BDDAssertions.then;
+import java.io.InputStream;
+import java.util.regex.Pattern;
 
+import static com.googlecode.catchexception.apis.BDDCatchException.caughtException;
+import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.then;
 
 class XmlMapperBuilderTest {
 
@@ -45,7 +45,7 @@ class XmlMapperBuilderTest {
     }
   }
 
-  @Test
+  @Test  //mappedStatemnet  参数
   void mappedStatementWithOptions() throws Exception {
     Configuration configuration = new Configuration();
     String resource = "org/apache/ibatis/builder/AuthorMapper.xml";
@@ -63,7 +63,7 @@ class XmlMapperBuilderTest {
     }
   }
 
-  @Test
+  @Test //解析表达式
   void parseExpression() {
     BaseBuilder builder = new BaseBuilder(new Configuration()){{}};
     {
@@ -133,7 +133,7 @@ class XmlMapperBuilderTest {
     assertThat(typeHandler).isNull();
   }
 
-  @Test
+  @Test  //类型不可转换
   void resolveTypeHandlerNoAssignable() {
     BaseBuilder builder = new BaseBuilder(new Configuration()){{}};
     when(builder).resolveTypeHandler(String.class, "integer");
@@ -142,7 +142,7 @@ class XmlMapperBuilderTest {
       .hasMessage("Type java.lang.Integer is not a valid TypeHandler because it does not implement TypeHandler interface");
   }
 
-  @Test
+  @Test // NamespaceValue set一个空值
   void setCurrentNamespaceValueIsNull() {
     MapperBuilderAssistant builder = new MapperBuilderAssistant(new Configuration(), "resource");
     when(builder).setCurrentNamespace(null);
@@ -151,7 +151,7 @@ class XmlMapperBuilderTest {
       .hasMessage("The mapper element requires a namespace attribute to be specified.");
   }
 
-  @Test
+  @Test//CacheRefNamespace set一个空值
   void useCacheRefNamespaceIsNull() {
     MapperBuilderAssistant builder = new MapperBuilderAssistant(new Configuration(), "resource");
     when(builder).useCacheRef(null);

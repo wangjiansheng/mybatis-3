@@ -15,10 +15,12 @@
  */
 package org.apache.ibatis.builder;
 
-import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
+//参数表达式测试
 class ParameterExpressionTest {
 
   @Test
@@ -43,7 +45,7 @@ class ParameterExpressionTest {
     Assertions.assertEquals("VARCHAR", result.get("jdbcType"));
   }
 
-  @Test
+  @Test//包含 空格  测试
   void oldStyleJdbcTypeWithExtraWhitespaces() {
     Map<String, String> result = new ParameterExpression(" id :  VARCHAR ");
     Assertions.assertEquals(2, result.size());
@@ -125,12 +127,12 @@ class ParameterExpressionTest {
     Assertions.assertEquals("val2", result.get("attr2"));
   }
 
-  @Test
+  @Test//无效的jdbcType
   void invalidOldJdbcTypeFormat() {
     try {
       new ParameterExpression("id:");
       Assertions.fail();
-    } catch (BuilderException e) {
+    } catch (BuilderException e) {//解析错误在{id:}在位置3
       Assertions.assertTrue(e.getMessage().contains("Parsing error in {id:} in position 3"));
     }
   }
@@ -140,7 +142,7 @@ class ParameterExpressionTest {
     try {
       new ParameterExpression("(expression)+");
       Assertions.fail();
-    } catch (BuilderException e) {
+    } catch (BuilderException e) {//位置12中{(表达式)+}中的解析错误
       Assertions.assertTrue(e.getMessage().contains("Parsing error in {(expression)+} in position 12"));
     }
   }
