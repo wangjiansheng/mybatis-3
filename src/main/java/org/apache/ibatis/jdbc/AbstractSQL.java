@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * sql拼接类  重写了toString();
+ *
  * @author Clinton Begin
  * @author Jeff Butler
  * @author Adam Gent

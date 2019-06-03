@@ -28,6 +28,7 @@ class PluginTest {
   @Test
   void mapPluginShouldInterceptGet() {
     Map map = new HashMap();
+    //获取动态代理类  ，即 map大代理类
     map = (Map) new AlwaysMapPlugin().plugin(map);
     assertEquals("Always", map.get("Anything"));
   }

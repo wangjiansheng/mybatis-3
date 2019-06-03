@@ -27,6 +27,9 @@ import java.util.Properties;
 
 /**
  * A class to simplify access to resources through the classloader.
+ *一个类，用于简化通过类加载器对资源的访问。
+ *
+ * 配置文件访问工具类
  *
  * @author Clinton Begin
  */

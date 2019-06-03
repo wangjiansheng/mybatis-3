@@ -20,7 +20,7 @@ import org.apache.ibatis.cache.Cache;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * 同步缓存类
+ * 同步缓存类  缓存委派类
  * @author Clinton Begin
  */
 public class SynchronizedCache implements Cache {

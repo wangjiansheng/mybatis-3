@@ -20,29 +20,32 @@ import org.apache.ibatis.cache.decorators.ScheduledCache;
 import org.apache.ibatis.cache.decorators.SerializedCache;
 import org.apache.ibatis.cache.decorators.SynchronizedCache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class BaseCacheTest {
 
   @Test
   void shouldDemonstrateEqualsAndHashCodeForVariousCacheTypes() {
+    // 永久的   重写了equals方法的
     PerpetualCache cache = new PerpetualCache("test_cache");
     assertTrue(cache.equals(cache));
     assertTrue(cache.equals(new SynchronizedCache(cache)));
     assertTrue(cache.equals(new SerializedCache(cache)));
     assertTrue(cache.equals(new LoggingCache(cache)));
     assertTrue(cache.equals(new ScheduledCache(cache)));
-
+    //delegate 类的hashCode
     assertEquals(cache.hashCode(), new SynchronizedCache(cache).hashCode());
     assertEquals(cache.hashCode(), new SerializedCache(cache).hashCode());
     assertEquals(cache.hashCode(), new LoggingCache(cache).hashCode());
     assertEquals(cache.hashCode(), new ScheduledCache(cache).hashCode());
 
+    //hashCode()是一个方法，所以只有1个值
     Set<Cache> caches = new HashSet<>();
     caches.add(cache);
     caches.add(new SynchronizedCache(cache));
